@@ -1,0 +1,97 @@
+* {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+.wrapper {
+  background-color: #04111d;
+  width: 100vw;
+  padding-left: 1.2rem;
+  padding-right: 1.2rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logoText {
+  margin-left: 0.4rem;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 2rem;
+}
+
+.searchBar {
+  display: flex;
+  flex: 1 1 0%;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  width: max-content 520px;
+  align-items: center;
+  background-color: #363840;
+  border-radius: 0.8rem;
+}
+
+.searchBar:hover {
+  background-color: #4c505c;
+}
+
+.searchIcon {
+  color: #8a939b;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+  margin-top: 0.3rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.headerItems {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerItem {
+  color: #c8cacd;
+  padding-right: 2rem;
+  font-weight: 700;
+}
+
+.headerItem:hover {
+  color: #fff;
+  cursor: pointer;
+}
+.none {
+  color: #8a939b;
+  margin-top: 8px;
+  margin-right: 2rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.none:hover {
+  color: #fff;
+  cursor: pointer;
+}
+
+.walletIcon {
+  color: #8a939b;
+  margin-top: 8px;
+  margin-right: 3.5rem;
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.walletIcon:hover {
+  color: #fff;
+  cursor: pointer;
+}
