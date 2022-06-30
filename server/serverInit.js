@@ -1,6 +1,7 @@
 const {ethers} = require("ethers");
-const {user, contract} = require("./models");
+const {user, contract,transaction} = require("./models");
 const schedule = require("node-schedule");
+const {SJTokenAbi}=require('./contracts/SJToken')
 const provider = new ethers.providers.JsonRpcProvider(process.env.NODE_URI);
 
 const sleep = (ms) => {
@@ -133,7 +134,39 @@ module.exports = {
                 }
             )
         })
+    },
 
+
+    subscribe: async () => {
+        const serverContract = await contract.findOne({
+            where: {type: "FT"}
+        });
+        const FTContract = new ethers.Contract(serverContract.contractAddress, SJTokenAbi, provider);
+        FTContract.on("mintedToken", async (to, amount,data) => {
+            console.log("mintToken transaction ====> ",data.transactionHash)
+            const userData = await user.findOne({
+                where: {address: to}
+            });
+            await transaction.findOrCreate({
+                where: {
+                    txHash: data.transactionHash,
+                    method: 'mintToken',
+                    token: ethers.utils.formatEther(amount),
+                    userId: userData.id,
+                },
+            })
+
+            const mintedToken= await transaction.findAll({
+                where: {
+                    userId: userData.id,
+                },
+            })
+            let totalToken= mintedToken.reduce(function add(sum,data){return sum+data.token},0)
+            await userData.update(
+                {token: totalToken}
+            )
+
+        });
 
     },
 }

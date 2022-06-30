@@ -10,7 +10,7 @@ const fs = require("fs");
 const https = require("https");
 const app = express();
 const PORT = 4000;
-const {createServerAccount, deployContracts,getFaucet,loginInitialization} = require('./serverInit')
+const {createServerAccount, deployContracts,getFaucet,loginInitialization,subscribe} = require('./serverInit')
 const{SJTokenBytecode, SJTokenAbi} = require('./contracts/SJToken')
 
 
@@ -51,6 +51,7 @@ models.sequelize.sync().then( () => {
             await getFaucet(1)
             await deployContracts("FT", SJTokenAbi, SJTokenBytecode)
             await loginInitialization()
+            await subscribe()
         })
 
     } else {
