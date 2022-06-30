@@ -10,6 +10,9 @@ module.exports = {
 
     signIn: asyncWrapper(async (req, res, next) => {
         console.log(req.body);
+        if (req.body.email === undefined || req.body.password === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.CONFLICT);
+        }
         const userInfo = await user.findOne({
             where: {email: req.body.email, password: req.body.password},
         });

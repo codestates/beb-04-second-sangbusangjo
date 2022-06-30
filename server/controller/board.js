@@ -7,6 +7,9 @@ const CustomError = require("../errors/custom-error");
 const StatusCodes = require("http-status-codes")
 module.exports = {
     write: asyncWrapper(async (req, res) => {
+        if (req.body.title === undefined || req.body.content === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.CONFLICT);
+        }
         const decoded = await isAuthorized(req)
         const userInfo = await user.findOne({
             where: {id: decoded.id},
@@ -36,6 +39,9 @@ module.exports = {
     }),
 
     edit : asyncWrapper(async (req, res) => {
+        if (req.body.title === undefined || req.body.content === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.CONFLICT);
+        }
         const decoded = await isAuthorized(req)
         const userInfo = await user.findOne({
             where: {id: decoded.id},
@@ -138,6 +144,9 @@ module.exports = {
     }),
 
     commentToWriting : asyncWrapper(async (req, res) => {
+        if (req.body.content === undefined) {
+            throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.CONFLICT);
+        }
         const {content} = req.body;
         const boardData = await board.findOne({
             where: {id: req.params.id},
