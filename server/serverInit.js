@@ -3,6 +3,11 @@ const {user, contract} = require("./models");
 const schedule = require("node-schedule");
 const provider = new ethers.providers.JsonRpcProvider(process.env.NODE_URI);
 
+const sleep = (ms) => {
+    return new Promise(resolve=>{
+        setTimeout(resolve,ms)
+    })
+}
 
 module.exports = {
     createServerAccount: () => {
@@ -38,6 +43,9 @@ module.exports = {
     deployContracts: (type, abi, bytecode) => {
         return new Promise(async (resolve, reject) => {
             try {
+
+
+
                 const serverContract = await contract.findOne({
                     where: {type: type}
                 });
@@ -49,6 +57,13 @@ module.exports = {
                     const gasPrice = ethers.utils.formatUnits(await provider.getGasPrice(), 'gwei')
                     const options = {gasLimit: 6721975, gasPrice: ethers.utils.parseUnits(gasPrice, 'gwei')}
                     const factory = new ethers.ContractFactory(abi, bytecode, serverWallet)
+                    let serverBalance = await provider.getBalance(data.address)
+                    while (serverBalance<0.1){
+                        await sleep(1000)
+                        serverBalance = await provider.getBalance(data.address)
+                        console.log("loading...")
+                    }
+                    console.log("complete!")
                     const serverContract = await factory.deploy(options)
                     await serverContract.deployed()
                     const serverContractAddress = serverContract.address
@@ -103,6 +118,8 @@ module.exports = {
                 console.log('txHash : ', txObj.hash)
                 console.log('Server ETH : ', ethers.utils.formatEther(serverBalance))
             })
+
+
     },
 
     loginInitialization: async () => {
