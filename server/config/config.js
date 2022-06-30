@@ -8,6 +8,7 @@ const development = {
     database: env.MYSQL_DATABASE,
     host: env.MYSQL_HOST,
     dialect: "mysql",
+    logging: false
     //port: env.MYSQL_PORT
 };
 

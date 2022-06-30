@@ -56,7 +56,7 @@ module.exports = {
                 const newBody = {email,userName,password, address: account.address, privateKey: account.privateKey};
                 const newAccount = new user(newBody);
                 await newAccount.save();
-                res.status(201).json(newAccount);
+                res.status(StatusCodes.OK).send({message: "ok"});
             } catch (err) {
                 res.status(400).json({message: err.message});
             }
