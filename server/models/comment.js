@@ -1,7 +1,8 @@
 'use strict';
 const { Model } = require('sequelize');
+// const { board } = require('./board');
 module.exports = (sequelize, DataTypes) => {
-    class board extends Model {
+    class comment extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -11,44 +12,35 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
         }
     }
-    board.init(
+    comment.init(
         {
-            title: {
-                type:DataTypes.STRING(30),
-                // 자주사용되는 자료형 STRING, TEXT, BOOLEAN, INTEGER, FLOAT, DATETIME
-                allowNull: false, //필수값
-            },
             content: {
                 type:DataTypes.STRING(500),
                 allowNull: false, //필수값
             },
-            hit: {
-                type:DataTypes.INTEGER(30),
-                allowNull: true, //필수값,
-                defaultValue: 0
-            },
         },
         {
             sequelize,
-            modelName: 'board',
+            modelName: 'comment',
             charset: 'utf8',
             collate: 'utf8_general_ci'
         }
     );
 
-
-    board.associate = function (models) {
-        board.belongsTo(models.user, {
+    comment.associate = function(models){
+        comment.belongsTo(models.board, {
+            foreignKey: "boardId",
+            targetKey: "id",
+            onDelete: 'cascade',
+            onUpdate: 'cascade'
+        });
+        comment.belongsTo(models.user, {
             foreignKey: "userId",
             targetKey: "id",
             onDelete: 'cascade',
             onUpdate: 'cascade'
         })
-        board.hasMany(models.comment,{
-            foreignKey: "boardId",
-            sourceKey: "id",
-            onDelete: 'cascade',
-            onUpdate: 'cascade'});
     };
-    return board;
+
+    return comment;
 };

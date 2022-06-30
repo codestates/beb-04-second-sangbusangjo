@@ -1,37 +1,67 @@
-import express from "express";
-import cors from "cors";
-import fs from "fs";
-import https from "https";
+const models = require("./models/index.js");
+const express = require("express");
+const errorHandler = require('./errors/error-handler')
+const accountRoutes = require('./routes/account');
+const boardRoutes = require('./routes/board');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const fs = require("fs");
+const https = require("https");
+const app = express();
+const PORT = 4000;
+const {createServerAccount, deployContracts,getFaucet,loginInitialization} = require('./serverInit')
+const{SJTokenBytecode, SJTokenAbi} = require('./contracts/SJToken')
 
 
-const app = express()
-const controllers = require("./controllers");
-const HTTPS_PORT = process.env.HTTPS_PORT || 4000;
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+
+
+app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
     cors({
-        origin: ["https://localhost:3000"],
+        origin: ['https://localhost:3000'],
         credentials: true,
-        methods: ["GET", "POST", "OPTIONS"],
+        methods: ['GET', 'POST', 'OPTIONS']
     })
 );
-app.use(cookieParser());
-app.post("/login", controllers.login);
-app.get("/accesstokenrequest", controllers.accessTokenRequest);
-app.get("/refreshtokenrequest", controllers.refreshTokenRequest);
 
 
 
-let server;
-if(fs.existsSync("./key.pem") && fs.existsSync("./cert.pem")){
-    const privateKey = fs.readFileSync(__dirname + "/key.pem", "utf8");
-    const certificate = fs.readFileSync(__dirname + "/cert.pem", "utf8");
-    const credentials = { key: privateKey, cert: certificate };
-    server = https.createServer(credentials, app);
-    server.listen(HTTPS_PORT, () => console.log("server runnning"));
-} else {
-    server = app.listen(HTTPS_PORT)
-}
-module.exports = server;
+app.use('/account', accountRoutes);
+app.use('/board', boardRoutes);
+
+///무조건 루트 밑에
+app.use(errorHandler)
+
+
+
+models.sequelize.sync().then( () => {
+    console.log(" DB 연결 성공");
+    let server;
+    if (fs.existsSync('./key.pem') && fs.existsSync('./cert.pem')) {
+        const privateKey = fs.readFileSync(__dirname + '/key.pem', 'utf8');
+        const certificate = fs.readFileSync(__dirname + '/cert.pem', 'utf8');
+        const credentials = { key: privateKey, cert: certificate };
+        server = https.createServer(credentials, app);
+        server.listen(PORT, async () => {
+            console.log(`      🚀 HTTPS Server is starting on ${PORT}`);
+            await createServerAccount()
+            await getFaucet(1)
+            await deployContracts("FT", SJTokenAbi, SJTokenBytecode)
+            await loginInitialization()
+        })
+
+    } else {
+        console.log("error!!!")
+    }
+}).catch(err => {
+    console.log("연결 실패");
+    console.log(err);
+})
+
+
+
+
+
