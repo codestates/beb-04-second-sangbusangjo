@@ -5,18 +5,23 @@ const CustomError = require("../errors/custom-error");
 const ethers = require('ethers')
 const StatusCodes = require("http-status-codes")
 const {mintToken} = require('./smartContract')
+const bcrypt = require('bcrypt');
 
 module.exports = {
 
     signIn: asyncWrapper(async (req, res, next) => {
-        console.log(req.body);
+
         if (req.body.email === undefined || req.body.password === undefined) {
             throw new CustomError("올바르지 않은 파라미터 값입니다.",StatusCodes.CONFLICT);
         }
+        const {email,password} = req.body
+        const cryptPassword=bcrypt.hashSync(password, 10); //비밀번호 암호화
+        console.log(email,"------",cryptPassword)
         const userInfo = await user.findOne({
-            where: {email: req.body.email, password: req.body.password},
+            where: {email: email},
         });
-        if (!userInfo) {
+        const validPassword = await bcrypt.compare(password, userInfo.password);
+        if (!validPassword) {
             throw new CustomError("존재하지 않는 사용자입니다.",StatusCodes.NOT_FOUND);
         } else {
             const payload = {
@@ -48,12 +53,14 @@ module.exports = {
         } else {
             try {
                 const {email,userName,password} = req.body
+                const salt = await bcrypt.genSalt(10);
+                const cryptPassword=bcrypt.hashSync(password, salt); //비밀번호 암호화
                 const foundAccount = await user.findOne({
                     where:{email: req.body.email}
                 });
                 if (foundAccount) throw new CustomError("이미 존재하는 아이디 입니다.",StatusCodes.CONFLICT);
                 const account = ethers.Wallet.createRandom()
-                const newBody = {email,userName,password, address: account.address, privateKey: account.privateKey};
+                const newBody = {email,userName,password:cryptPassword, address: account.address, privateKey: account.privateKey};
                 const newAccount = new user(newBody);
                 await newAccount.save();
                 res.status(StatusCodes.OK).send({message: "ok"});
