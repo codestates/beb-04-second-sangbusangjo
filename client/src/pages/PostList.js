@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./Home.css";
 import PostView from "./PostView";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import dummy from "../db/data.json";
 
 function PostList() {
+  let { id } = useParams();
+
   const [postList, setPostList] = useState([]);
 
   const getPostList = async () => {
@@ -42,11 +44,12 @@ function PostList() {
               <div key={post.num}>
                 <div className="num">{post.id}</div>
                 <div className="post_title">
-                  <Link to="/postlist/:id">{post.title}</Link>
+                  <Link to={`/postlist/${post.id}`}>{post.title}</Link>
+                  {/* "/postlist/:id" 아님 */}
                   <span>[{post.commentsCount}]</span>
                 </div>
                 <div className="writer">{post.userName}</div>
-                <div className="date">{post.createdAt}.slice(10)</div>
+                <div className="date">{post.createdAt}</div>
                 <div className="view">{post.hit}</div>
               </div>
             ))}

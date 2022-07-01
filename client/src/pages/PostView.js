@@ -1,8 +1,26 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import Comment from "../component/Comment";
+import { useEffect, useState } from "react";
 
 function PostView() {
+  const [postContent, setPostContent] = useState([]);
+
+  let { id } = useParams();
+
+  const getPostView = async () => {
+    let url = `https://localhost:4000/board/${id}`;
+    let response = await fetch(url);
+    let data = await response.json();
+    let postcontent = data.data;
+    console.log(postcontent);
+    setPostContent(postcontent);
+  };
+
+  useEffect(() => {
+    getPostView();
+  }, []);
+
   return (
     <div className="board_wrap">
       <div className="board_title">
@@ -11,26 +29,26 @@ function PostView() {
       <div>
         <div className="board_view_wrap">
           <div className="board_view">
-            <div className="title">글 제목</div>
+            <div className="title">{postContent.title}</div>
             <div className="info">
               <dl>
                 <dt>번호</dt>
-                <dd>1</dd>
+                <dd>{postContent.id}</dd>
               </dl>
               <dl>
                 <dt>작성자</dt>
-                <dd>제훈</dd>
+                <dd>{postContent.userName}</dd>
               </dl>
               <dl>
                 <dt>작성일</dt>
-                <dd>22.06.25</dd>
+                <dd>{postContent.createdAt}</dd>
               </dl>
               <dl>
                 <dt>조회수</dt>
-                <dd>1</dd>
+                <dd>{postContent.hit}</dd>
               </dl>
             </div>
-            <div className="cont">글내용</div>
+            <div className="cont">{postContent.content}</div>
           </div>
           <div>
             <Comment />
