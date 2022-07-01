@@ -1,6 +1,8 @@
 # Team
 SangBuSangJo
 
+
+
 ## Commands
 * **npm run start :** 서버 실행
 
@@ -10,3 +12,13 @@ SangBuSangJo
 * **신동욱**
 * **문제훈**
 * **김태영**
+
+
+
+## Database
+* create database sangbusangjo
+
+
+
+## Swagger
+* https://127.0.0.1:4000/swagger
