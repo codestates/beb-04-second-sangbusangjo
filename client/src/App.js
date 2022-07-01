@@ -41,7 +41,7 @@ class App extends Component {
           {/* 2. component -> element, element형태로 넘겨야함 <Home /> */}
           <Route exact path="/" element={<Main />} />
           <Route path="/postlist" element={<PostList />} />
-          <Route path="/postview" element={<PostView />} />
+          <Route path="/postlist/:id" element={<PostView />} />
           <Route path="/postwrite" element={<PostWrite />} />
           <Route path="/postedit" element={<PostEdit />} />
 

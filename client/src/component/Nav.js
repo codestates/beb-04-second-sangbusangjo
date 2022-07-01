@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import Login from "./Login";
 import PostList from "../pages/PostList";
 import "./Nav.css";
+import useUserInfo from "../hooks/useUserInfo";
 
 function Nav() {
+  const [{ token, username, email }, setUserInfo] = useUserInfo();
+  console.log(token, username, email);
   return (
     <div className="wrapper">
       <Link to="/">
@@ -20,19 +23,35 @@ function Nav() {
           <div className="logoText">SangbusangJo</div>
         </div>
       </Link>
-
-      <div className="headerItems">
-        <Link to="/login" component={Login}>
-          <div className="headerItem">Login</div>
-        </Link>
-        <Link to="postlist" component={<PostList />}>
-          <div>
-            <a className="headerItem">Board</a>
+      {token !== undefined ? (
+        <div className="headerItems">
+          <div className="headerItem" onClick={() => setUserInfo({})}>
+            Logout
           </div>
-        </Link>
+          <Link to="postlist" component={<PostList />}>
+            <div>
+              <a className="headerItem">
+                토큰 수 {token} {username} / {email}
+              </a>
+            </div>
+          </Link>
 
-        <div className="none"></div>
-      </div>
+          <div className="none"></div>
+        </div>
+      ) : (
+        <div className="headerItems">
+          <Link to="/login" component={Login}>
+            <div className="headerItem">Login</div>
+          </Link>
+          <Link to="postlist" component={<PostList />}>
+            <div>
+              <a className="headerItem">Board</a>
+            </div>
+          </Link>
+
+          <div className="none"></div>
+        </div>
+      )}
     </div>
   );
 }

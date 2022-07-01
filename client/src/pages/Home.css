@@ -100,17 +100,21 @@ a {
   text-align: center;
 }
 .board_list .post_title {
-  width: 60%;
+  width: 50%;
   text-align: left;
   /* 제목은 왼쪽 */
-  text-decoration: none;
-  /* 밑줄 없애기 왜 안되냐!!!!! */
+}
+.board_list .post_title span {
+  margin-left: 10px;
 }
 
 .board_list .writer {
   width: 10%;
 }
 .board_list .date {
+  width: 15%;
+}
+.board_list .updatedDate {
   width: 10%;
 }
 .board_list .view {
@@ -196,6 +200,7 @@ a {
   border-bottom: 2px solid rgb(115, 75, 224);
   line-height: 160%;
   /* 글 높이? 문단 간격? */
+  min-height: 150px;
 }
 
 /* 게시물 쓰기 css */
@@ -277,7 +282,6 @@ a {
 .comment_list {
   padding-bottom: 10px;
   margin-bottom: 20px;
-  border-bottom: 1px dotted gray;
   text-indent: 10px;
   /* 들여쓰기 */
 }
@@ -292,6 +296,7 @@ a {
 .comment {
   padding: 10px 0;
   /* 댓글간에 위아래로 10px씩 띄우기 */
+  border-bottom: 1px dotted black;
 }
 
 /* 반응형 디자인 */
