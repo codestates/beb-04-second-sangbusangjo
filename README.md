@@ -9,9 +9,9 @@ SangBuSangJo
 
 
 ## Contributors
-* **신동욱**
-* **문제훈**
-* **김태영**
+* **신동욱 -Server**
+* **문제훈 -Client**
+* **김태영 -Client**
 
 
 
