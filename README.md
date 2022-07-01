@@ -26,5 +26,7 @@ SangBuSangJo
 
 
 ## ToDo
+* Ganache 실행
+* mysql database 생성
 * .env.example 작성 => .env 로 이름 변경
 
