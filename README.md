@@ -22,3 +22,9 @@ SangBuSangJo
 
 ## Swagger
 * https://127.0.0.1:4000/swagger
+
+
+
+## ToDo
+* .env.example 작성 => .env 로 이름 변경
+
