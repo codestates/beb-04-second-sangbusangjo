@@ -1,11 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Home.css";
 import PostView from "./PostView";
 import { Link } from "react-router-dom";
 import dummy from "../db/data.json";
 
 function PostList() {
-  const [postList, setPostList] = useState(dummy.posts);
+  const [postList, setPostList] = useState([]);
+
+  const getPostList = async () => {
+    let url = `https://localhost:4000/board`;
+    let response = await fetch(url);
+    let data = await response.json();
+    let postlist = data.data;
+    console.log(postlist);
+    setPostList(postlist);
+  };
+
+  useEffect(() => {
+    getPostList();
+  }, []);
 
   return (
     <div className="board_wrap">
@@ -27,13 +40,14 @@ function PostList() {
             {postList.map((post) => (
               // dummy.map 이 아니라 dummy.posts.map!!
               <div key={post.num}>
-                <div className="num">{post.num}</div>
+                <div className="num">{post.id}</div>
                 <div className="post_title">
-                  <Link to="/postview">{post.title}</Link>
+                  <Link to="/postlist/:id">{post.title}</Link>
+                  <span>[{post.commentsCount}]</span>
                 </div>
-                <div className="writer">{post.writer}</div>
-                <div className="date">{post.date}</div>
-                <div className="view">{post.view}</div>
+                <div className="writer">{post.userName}</div>
+                <div className="date">{post.createdAt}.slice(10)</div>
+                <div className="view">{post.hit}</div>
               </div>
             ))}
           </div>
