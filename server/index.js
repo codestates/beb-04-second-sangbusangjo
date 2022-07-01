@@ -3,6 +3,8 @@ const express = require("express");
 const errorHandler = require('./errors/error-handler')
 const accountRoutes = require('./routes/account');
 const boardRoutes = require('./routes/board');
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -31,6 +33,7 @@ app.use(
 
 app.use('/account', accountRoutes);
 app.use('/board', boardRoutes);
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 ///무조건 루트 밑에
 app.use(errorHandler)
