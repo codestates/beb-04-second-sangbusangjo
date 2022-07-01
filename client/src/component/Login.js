@@ -1,7 +1,11 @@
-import axios from 'axios';
-import React, {Component, useState} from 'react'
-import { Link } from 'react-router-dom';
-import "./LoginRegister.css"
+import axios from "axios";
+import React, { Component, useState } from "react";
+import { Link } from "react-router-dom";
+import "./LoginRegister.css";
+import { login } from "../store";
+import { useSelector, useDispatch } from "react-redux";
+import { useCookies } from "react-cookie";
+import jwt_decode from "jwt-decode";
 
 axios.defaults.withCredentials = true;
 
@@ -38,78 +42,88 @@ axios.defaults.withCredentials = true;
 //     }
 //   }
 
-export default function Login({handleResponseSuccess}) {
-//   const [id, setId] = useState("");
-//   const [password, setPassword] = useState(""); 
+export default function Login({ handleResponseSuccess }) {
+  //   const [id, setId] = useState("");
+  //   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const [cookies, setCookie] = useCookies();
+
+  const [loginState, setloginState] = useState(false);
   const [loginInfo, setLoginInfo] = useState({
-      email: '',
-      password: ''
+    email: "",
+    password: "",
   });
   // const [errorMessage, setErrorMessage] = useState('');
   const handleInputValue = (key) => (e) => {
-    setLoginInfo({ ...loginInfo, [key]: e.target.value});
+    setLoginInfo({ ...loginInfo, [key]: e.target.value });
+    // console.log(e.target.value);
   };
-  
 
-  const handleLogin = () => {
-    if (loginInfo.email == '' || loginInfo.password == ''){
-        alert('none data entered or wrong data');
-    }else{
-        axios.post('https://localhost:3000/login', {
-            email: loginInfo.email,
-            password: loginInfo.password,
-        }).then((res) => {
-            if(handleResponseSuccess != undefined){
-                handleResponseSuccess();
-            }
-            
-            
-        }).catch((err) => {
-            console.log('11');
-        })
+  const handleLogin = async () => {
+    console.log("loginnnn");
+    if (loginInfo.email == "" || loginInfo.password == "") {
+      alert("none data entered or wrong data");
+      console.log(loginInfo);
+    } else {
+      try {
+        const res = await axios.post("https://localhost:4000/account/signIn", {
+          email: loginInfo.email,
+          password: loginInfo.password,
+        });
+        if (res) {
+          const token = cookies["jwt"];
+          if (!token) throw new Error(`Unexpected cookie`);
+
+          const payload = jwt_decode(token);
+          if (!payload) throw new Error(`Invalid json web token`);
+
+          setCookie("userInfo", payload);
+        }
+      } catch (e) {
+        console.error(e);
+      }
     }
-  }
+  };
 
-
-  
-
-  
-    return (
-    
-      <div class="loginregister">
-        <form onSubmit={(e) => e.preventDefault()}>
-                  <div class='logincontent'>
-        SangbusangJo community
-
+  return (
+    <div class="loginregister">
+      <form onSubmit={(e) => e.preventDefault()}>
+        <div class="logincontent">SangbusangJo community</div>
+        <div>
+          <input
+            name="email"
+            type="email"
+            placeholder="E-MAIL"
+            // value={this.state.email}
+            onChange={handleInputValue("email")}
+            class="loginregister__input"
+          />
         </div>
-            <div>
-                
-                <input name="email"
-                type="email" 
-                placeholder="email" 
-                // value={this.state.email} 
-                onChange={(e) => handleInputValue('email')} 
-                class="loginregister__input"/>
-                </div>
-            <div>
-                <input name="password" 
-                type="password" 
-                placeholder="PASSWORD"
-                // value={this.state.password} 
-                onChange={handleInputValue('password')} 
-                class="loginregister__input"/></div>
-                <Link to='/signup'>
-                    <div className='signup'>You dont have account?</div>
-                    </Link>
-            <div>
-                <button type="submit" onClick={handleLogin} class="loginregister__button">Login</button>
-                    </div>
-                    
-                    {/* <div className='alert-box'> {errorMessage} </div> */}
-            
-        </form>
-      </div>
-      
-    );
-  }
+        <div>
+          <input
+            name="password"
+            type="password"
+            placeholder="PASSWORD"
+            // value={this.state.password}
+            onChange={handleInputValue("password")}
+            class="loginregister__input"
+          />
+        </div>
+        <Link to="/signup">
+          <div className="signup">You dont have account?</div>
+        </Link>
+        <div>
+          <button
+            type="submit"
+            onClick={handleLogin}
+            class="loginregister__button"
+          >
+            Login
+          </button>
+        </div>
 
+        {/* <div className='alert-box'> {errorMessage} </div> */}
+      </form>
+    </div>
+  );
+}
